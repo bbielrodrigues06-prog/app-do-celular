@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Saudação</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000">
+
+
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: white;
+            text-align: center;
+            padding-top: 70px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        h1, h2 {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="titulo"></h1>
+        <h2 id="hora"></h2>
+        <h2 id="data"></h2>
+        <h2 id="diaTipo"></h2>
+        <h2 id="frase"></h2>
+    </div>
+
+    <script>
+        // Variáveis globais para as frases e imagens
+        let frases = [];
+        const imagens = {
+            manha: 'solzinho.jpg',
+            tarde: 'tade.jpg',
+            noite: 'noite.jpg',
+            madrugada: 'madrugada.webp'
+        };
+
+        function trocar() {
+            const agora = new Date();
+            const hora = agora.getHours();
+            const minutos = agora.getMinutes().toString().padStart(2, "0");
+            const segundos = agora.getSeconds().toString().padStart(2, "0");
+            const opcoes = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dataFormatada = agora.toLocaleDateString("pt-BR", opcoes);
+            const diaSemana = agora.getDay();
+
+            let mensagem;
+            let tipoDia;
+            let imagemURL;
+
+            if (hora >= 6 && hora < 12) {
+                imagemURL = imagens.manha;
+                mensagem = "BOM DIA!";
+                frases = ["Devemos acordar", "O sol já está brilhando", "Comece o dia com energia"];
+            } else if (hora >= 12 && hora < 18) {
+                imagemURL = imagens.tade;
+                mensagem = "BOA TARDE!";
+                frases = ["Aproveite sua tarde", "Mantenha o foco", "O dia está correndo"];
+            } else if (hora >= 18 && hora < 24) {
+                imagemURL = imagens.noite;
+                mensagem = "BOA NOITE!";
+                frases = ["Hora de descansar", "Aproveite a noite", "Relaxe e recarregue as energias"];
+            } else { // Período de 00:00 a 05:59
+                imagemURL = imagens.madrugada;
+                mensagem = "HORA DE DESCANSAR";
+                frases = ["Silêncio da madrugada", "Não há nada como o sono", "Descanse para um novo dia"];
+            }
+
+            if (diaSemana === 0 || diaSemana === 6) {
+                tipoDia = "Dia de folga";
+            } else {
+                tipoDia = "Dia de trabalhar";
+            }
+
+            // Atualização do DOM com os dados
+            document.body.style.backgroundImage = `url('${imagemURL}')`;
+            document.getElementById("titulo").textContent = mensagem;
+            document.getElementById("hora").textContent = `Horário: ${hora}:${minutos}:${segundos}`;
+            document.getElementById("data").textContent = `Data: ${dataFormatada}`;
+            document.getElementById("diaTipo").textContent = tipoDia;
+            
+            trocarFrase();
+        }
+
+        function trocarFrase () {
+            if (frases.length > 0) {
+                const fraseAleatoria = frases[Math.floor(Math.random() * frases.length)];
+                document.getElementById("frase").textContent = fraseAleatoria;
+            }
+        }
+
+        trocar();
+        setInterval(trocar, 1000);
+
+            if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("service-worker.js")
+                .then(() => console.log ("service Worker registrado"))
+                .catch(err  => console.log ("Erro no SW:", err));
+
+            }
+        </script>
+
+</body>
+</html>
